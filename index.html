@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>ChatGPT en local</title>
 </head>
 <body>
-    
+    <main>
+        <ul>
+            <li class="message bot">
+                <span>EIA</span>
+                <p>Esta es la respuesta del bot</p>
+            </li>
+
+            <li class="message user">
+                <span>Tú</span>
+                <p>Esta es la respuesta del usuario</p>
+            </li>
+            <li class="message user">
+                <span>Tú</span>
+                <p>Esta es la respuesta del usuarioakjshdasjdhasljdhasljkdhaskjdhaskjdhkjashdkjashdkadhskj prueba prueba prueba</p>
+            </li>
+        </ul>
+    </main>
+
+    <form>
+        <input placeholder="Escribe aquí tu mensaje...">
+        <button>Enviar</button>
+    </form>
+
+    <template id="message-template">
+        <li class="message">
+            <span></span>
+            <p></p>
+        </li>
+    </template>
 </body>
 </html>
