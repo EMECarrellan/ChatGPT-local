@@ -17,6 +17,7 @@ main {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 8px;
     margin-bottom: 16px;
+    scroll-behavior: smooth;
     overflow-y: auto;
 }
 
@@ -87,8 +88,25 @@ form {
         padding: 8px;
         transition: background .3s ease;
 
+        &[disabled] {
+            background: #ccc;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         &:hover {
             background: hsl(199, 100%, 35%);
         }
+    }
+
+    small {
+        font-size: 10px;
+        color: #555;
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: 400px;
     }
 }
