@@ -1,4 +1,4 @@
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+import { CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
 const $ = (el) => document.querySelector(el);
 
@@ -13,13 +13,13 @@ const $info = $('small');
 
 let messages = [];
 
-const SELECTED_MODEL = 'gemma-2b-it-q4f16_1-MLC-1k';
+const SELECTED_MODEL = 'Llama-3-8B-Instruct-q4f32_1-MLC-1k';
 
-const engine = await CreateMLCEngine(
+const engine = await CreateWebWorkerMLCEngine(
+    new Worker('/JS/worker.js', { type: 'module' }),
     SELECTED_MODEL,
     {
         initProgressCallback: (info) => {
-            console.log('initProgressCallback', info);
             $info.textContent = `${info.text}`;
             if (info.progress === 1) {
                 $button.removeAttribute('disabled');
@@ -39,17 +39,35 @@ $form.addEventListener('submit', async (event) => {
     addMessage(messageText, 'user');
     $button.setAttribute('disabled', true);
 
-    const reply = await engine.chat.completions.create({
-        messages: [
-            ...messages,
-            {
-                role: 'user',
-                content: messageText
-            }
-        ]
+    const userMessage = {
+        role: 'user',
+        content: messageText
+    }
+
+    messages.push(userMessage);
+
+    const chunks = await engine.chat.completions.create({
+        messages,
+        stream: true
     })
 
-    console.log(reply)
+    let reply = "";
+
+    const $botMessage = addMessage("", 'bot')
+
+    for await (const chunk of chunks) {
+        const [choice] = chunk.choices;
+        const content = choice?.delta?.content ?? "";
+        reply += content;
+        $botMessage.textContent = reply;
+        $container.scrollTop = $container.scrollHeight;
+    }
+
+    $button.removeAttribute('disabled');
+    messages.push({
+        role: 'assistant',
+        content: reply
+    })
 })
 
 function addMessage(text, sender) {
@@ -66,4 +84,6 @@ function addMessage(text, sender) {
     $messages.appendChild($newMessage);
     
     $container.scrollTop = $container.scrollHeight;
+
+    return $text;
 }
